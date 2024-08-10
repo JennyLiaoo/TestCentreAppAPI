@@ -1,0 +1,368 @@
+openapi: 3.0.0
+info:
+  title: TestApp API
+  description: API for managing tests, students, and courses
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /test:
+    post:
+      summary: Add a new test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestCreationRequestBodySchema"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+    delete:
+      summary: Delete a test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: The ID of the test to be deleted
+      responses:
+        "200":
+          description: OK
+    patch:
+      summary: Update a test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestUpdateRequestBodySchema"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+    get:
+      summary: Retrieve tests
+      parameters:
+        - in: query
+          name: testName
+          schema:
+            type: string
+          description: The name of the test to retrieve
+        - in: query
+          name: courseCode
+          schema:
+            type: string
+          description: The course code for which the test was created
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: The date of the test in YYYY-MM-DD format
+        - in: query
+          name: period
+          schema:
+            type: integer
+          description: The period or session for the test
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Test"
+  /test/start:
+    patch:
+      summary: Update the start time of a test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestUpdateTimeRequestBodySchema"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+  /students:
+    post:
+      summary: Add a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentCreationSchema"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+    delete:
+      summary: Delete a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: The ID of the student to be deleted
+      responses:
+        "200":
+          description: OK
+    patch:
+      summary: Update a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentCreationSchema"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+    get:
+      summary: Retrieve students
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: The name of the student to retrieve
+        - in: query
+          name: email
+          schema:
+            type: string
+          description: The email address of the student to retrieve
+        - in: query
+          name: extraTime
+          schema:
+            type: integer
+          description: The amount of extra time (in minutes) the student is allowed for tests
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+  /course:
+    post:
+      summary: Add a new course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CourseCreationRequestBodySchema"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+    delete:
+      summary: Delete a course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: The ID of the course to be deleted
+      responses:
+        "200":
+          description: OK
+    patch:
+      summary: Update a course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CourseCreationRequestBodySchema"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+    get:
+      summary: Retrieve courses
+      parameters:
+        - in: query
+          name: courseName
+          schema:
+            type: string
+          description: The name of the course to retrieve
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+  /upload:
+    post:
+      summary: Upload student and course data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  studentName:
+                    type: string
+                    description: Name of the student
+                  email:
+                    type: string
+                    description: Email of the student
+                  courseName:
+                    type: string
+                    description: Name of the course
+      responses:
+        "201":
+          description: Created
+components:
+  schemas:
+    TestCreationRequestBodySchema:
+      type: object
+      properties:
+        testName:
+          type: string
+        courseCode:
+          type: string
+        calculator:
+          type: boolean
+        testLength:
+          type: integer
+        notes:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        date:
+          type: string
+          format: date
+        period:
+          type: integer
+        teacherName:
+          type: string
+    TestUpdateRequestBodySchema:
+      type: object
+      properties:
+        _id:
+          type: string
+        testName:
+          type: string
+        courseCode:
+          type: string
+        calculator:
+          type: boolean
+        testLength:
+          type: integer
+        notes:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        date:
+          type: string
+          format: date
+        period:
+          type: integer
+        startTime:
+          type: string
+    TestUpdateTimeRequestBodySchema:
+      type: object
+      properties:
+        _id:
+          type: string
+        startTime:
+          type: string
+    Test:
+      type: object
+      properties:
+        _id:
+          type: string
+        testName:
+          type: string
+        courseCode:
+          type: string
+        calculator:
+          type: boolean
+        testLength:
+          type: integer
+        notes:
+          type: string
+        students:
+          type: array
+          items:
+            type: string
+        date:
+          type: string
+          format: date
+        period:
+          type: integer
+        startTime:
+          type: string
+        endTime:
+          type: string
+    StudentCreationSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        extraTime:
+          type: integer
+    Student:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        extraTime:
+          type: integer
+    CourseCreationRequestBodySchema:
+      type: object
+      properties:
+        courseName:
+          type: string
+    Course:
+      type: object
+      properties:
+        _id:
+          type: string
+        courseName:
+          type: string
